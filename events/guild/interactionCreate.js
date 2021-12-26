@@ -1,6 +1,7 @@
 const Timeout = new Set()
 const { MessageEmbed } = require('discord.js');
 const humanizeDuration = require("humanize-duration");
+const db = require('quick.db');
 
 module.exports = async(client, interaction) => {
     if (interaction.isCommand() || interaction.isContextMenu()) {
@@ -79,5 +80,21 @@ module.exports = async(client, interaction) => {
 	} catch (e) {
 		console.error(e)
 		return false;
+	}
+	if (interaction.isButton()) {
+		if (interaction.customId === 'role_button') {
+			const role = db.get(`${interaction.guild.id}_role`);
+			const findRole = interaction.guild.roles.cache.get(role);
+			if (!findRole) {
+				return interaction.reply({ content: `:x: i can\'t find role with id **${role}**\nif you are server admin setup button again using **/button**`, ephemeral: true }).catch(e => {});
+			}
+			if (interaction.member.roles.cache.has(role)) {
+				interaction.member.roles.remove(role).catch(e => {});
+				return interaction.reply({ content: `Removed, **${findRole.name}** role.`, ephemeral: true }).catch(e => {});
+			} else {
+				interaction.member.roles.add(role, `By discord buttons.`).catch(e => console.error);
+				return interaction.reply({ content: `Added, **${findRole.name}** role.`, ephemeral: true }).catch(e => {});
+			}
+		}
 	}
 } 
