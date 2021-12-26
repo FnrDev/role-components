@@ -1,7 +1,7 @@
-# BOT NAME
+# Discord Buttons
 
 
-## BOT DESCRIPTION
+## An easy bot to create discord buttons easily.
 
 ---
 ### Note: Node.js 16.6.0 or newer is required.
