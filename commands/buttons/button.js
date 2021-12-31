@@ -102,9 +102,7 @@ module.exports = {
         }).catch(e => {});
         await client.db.push('buttons', interaction.guild.id, {
             message: msg.id,
-            role: role.id,
-            time: msg.createdTimestamp,
-            guild: interaction.guild.id
+            role: role.id
         });
         interaction.reply({
             content: `**✅ button has been sent to ${channel} channel.**`
