@@ -1,5 +1,4 @@
 const { MessageActionRow, MessageButton } = require('discord.js');
-const db = require('quick.db');
 
 module.exports = {
     name: "button",
@@ -55,11 +54,12 @@ module.exports = {
         {
             name: "channel",
             description: "Channel you want to send button to.",
-            type: 7
+            type: 7,
+            channel_types: [0, 5]
         }
     ],
     permission: "ADMINISTRATOR",
-    run: async(interaction) => {
+    run: async(interaction, client) => {
         const style = interaction.options.getString('style');
         const label = interaction.options.getString('label');
         const role = interaction.options.getRole('role');
@@ -96,13 +96,18 @@ module.exports = {
             .setStyle(style)
             .setEmoji(emoji)
         )
-        await channel.send({
+        const msg = await channel.send({
             content: content,
             components: [row]
         }).catch(e => {});
-        db.set(`${interaction.guild.id}_role`, role.id)
+        await client.db.push('buttons', interaction.guild.id, {
+            message: msg.id,
+            role: role.id,
+            time: msg.createdTimestamp,
+            guild: interaction.guild.id
+        });
         interaction.reply({
-            content: `✅ button has been sent to ${channel} channel.`
+            content: `**✅ button has been sent to ${channel} channel.**`
         }).catch(e => console.error);
     }
 }

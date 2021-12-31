@@ -1,7 +1,6 @@
 const Timeout = new Set()
 const { MessageEmbed } = require('discord.js');
 const humanizeDuration = require("humanize-duration");
-const db = require('quick.db');
 
 module.exports = async(client, interaction) => {
     if (interaction.isCommand() || interaction.isContextMenu()) {
@@ -51,7 +50,7 @@ module.exports = async(client, interaction) => {
 	}
 	try {
 		if (interaction.isSelectMenu()) {
-			if (interaction.customId === 'ticket_cmd' || interaction.customId === 'info_cmd' || interaction.customId === 'general_cmd') {
+			if (interaction.customId === interaction.customId === 'info_cmd' || interaction.customId === 'general_cmd') {
 				const selectedValues = interaction.values;
 				const findCommand = client.commands.find(r => r.name === selectedValues[0])
 				if (selectedValues.includes(findCommand.name)) {
@@ -83,16 +82,17 @@ module.exports = async(client, interaction) => {
 	}
 	if (interaction.isButton()) {
 		if (interaction.customId === 'role_button') {
-			const role = db.get(`${interaction.guild.id}_role`);
-			const findRole = interaction.guild.roles.cache.get(role);
+			const data = await client.db.get('buttons', interaction.guild.id);
+			const filterMessage = data.filter(r => r.message === interaction.message.id)[0];
+			const findRole = interaction.guild.roles.cache.get(filterMessage.role);
 			if (!findRole) {
-				return interaction.reply({ content: `:x: i can\'t find role with id **${role}**\nif you are server admin setup button again using **/button**`, ephemeral: true }).catch(e => {});
+				return interaction.reply({ content: `:x: i can\'t find role with id **${filterMessage.role}**\nif you are server admin setup button again using **/button**`, ephemeral: true }).catch(e => {});
 			}
-			if (interaction.member.roles.cache.has(role)) {
-				interaction.member.roles.remove(role).catch(e => {});
+			if (interaction.member.roles.cache.has(filterMessage.role)) {
+				await interaction.member.roles.remove(filterMessage.role).catch(e => {});
 				return interaction.reply({ content: `Removed, **${findRole.name}** role.`, ephemeral: true }).catch(e => {});
 			} else {
-				interaction.member.roles.add(role, `By discord buttons.`).catch(e => console.error);
+				await interaction.member.roles.add(filterMessage.role, `By discord buttons.`).catch(e => console.error);
 				return interaction.reply({ content: `Added, **${findRole.name}** role.`, ephemeral: true }).catch(e => {});
 			}
 		}
