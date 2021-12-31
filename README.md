@@ -23,3 +23,12 @@ BOTID=BOT_ID
 SERVERID=SERVER_ID
 OWNERS=["596227913209217024"]
 ```
+
+## Todo
+#1 - style [✅]
+#2 - label [✅]
+#3 - emoji (optional) [✅]
+#4 - customId (role_button) [✅]
+#5 - channel (optional) [✅]
+#6 - content or embed [✅]
+#7 - role [✅]
