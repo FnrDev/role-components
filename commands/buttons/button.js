@@ -1,5 +1,4 @@
 const { MessageActionRow, MessageButton } = require('discord.js');
-const db = require('quick.db');
 
 module.exports = {
     name: "button",
@@ -55,11 +54,12 @@ module.exports = {
         {
             name: "channel",
             description: "Channel you want to send button to.",
-            type: 7
+            type: 7,
+            channel_types: [0, 5]
         }
     ],
     permission: "ADMINISTRATOR",
-    run: async(interaction) => {
+    run: async(interaction, client) => {
         const style = interaction.options.getString('style');
         const label = interaction.options.getString('label');
         const role = interaction.options.getRole('role');
@@ -88,6 +88,12 @@ module.exports = {
                 ephemeral: true
             }).catch(e => {});
         }
+        if (!channel.permissionsFor(interaction.guild.me).has('SEND_MESSAGES')) {
+            return interaction.reply({
+                content: `:x: I dont't have permissions to send message in ${channel} channel.`,
+                ephemeral: true
+            }).catch(console.error)
+        }
         const row = new MessageActionRow()
         .addComponents(
             new MessageButton()
@@ -96,13 +102,16 @@ module.exports = {
             .setStyle(style)
             .setEmoji(emoji)
         )
-        await channel.send({
+        const msg = await channel.send({
             content: content,
             components: [row]
         }).catch(e => {});
-        db.set(`${interaction.guild.id}_role`, role.id)
+        await client.db.push('buttons', interaction.guild.id, {
+            message: msg.id,
+            role: role.id
+        });
         interaction.reply({
-            content: `✅ button has been sent to ${channel} channel.`
+            content: `**✅ button has been sent to ${channel} channel.**`
         }).catch(e => console.error);
     }
 }

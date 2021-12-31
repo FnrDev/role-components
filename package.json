@@ -1,29 +1,29 @@
 {
-  "name": "fnr-template",
+  "name": "buttons",
   "version": "1.0.0",
-  "description": "Basic commands handler &amp; slash maker template",
+  "description": "An easy bot to create discord buttons easily.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/FnrDev/fnr-template.git"
+    "url": "git+https://github.com/FnrDev/buttons.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "FnrDev",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/FnrDev/fnr-template/issues"
+    "url": "https://github.com/FnrDev/buttons/issues"
   },
-  "homepage": "https://github.com/FnrDev/fnr-template#readme",
+  "homepage": "https://github.com/FnrDev/buttonsreadme",
   "dependencies": {
     "@discordjs/rest": "^0.1.0-canary.0",
     "colors": "^1.4.0",
     "discord-api-types": "^0.23.1",
-    "discord.js": "^13.3.1",
+    "discord.js": "^13.5.0",
     "dotenv": "^10.0.0",
     "humanize-duration": "^3.27.0",
-    "quick.db": "^7.1.3"
+    "mysql-database": "^1.2.7"
   }
 }
