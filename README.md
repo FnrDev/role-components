@@ -40,6 +40,6 @@ OWNERS=["596227913209217024"]
 #7 - role [✅]
 <br>
 - Button Subcommand :
-   - Delete Button []
-   - Edit Button []
-   - Embed Support []
+   - Delete Button [ ]
+   - Edit Button [ ]
+   - Embed Support [ ]
