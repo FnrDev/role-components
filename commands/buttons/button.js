@@ -88,6 +88,12 @@ module.exports = {
                 ephemeral: true
             }).catch(e => {});
         }
+        if (!channel.permissionsFor(interaction.guild.me).has('SEND_MESSAGES')) {
+            return interaction.reply({
+                content: `:x: I dont't have permissions to send message in ${channel} channel.`,
+                ephemeral: true
+            }).catch(console.error)
+        }
         const row = new MessageActionRow()
         .addComponents(
             new MessageButton()
