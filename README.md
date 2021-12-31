@@ -26,9 +26,15 @@ OWNERS=["596227913209217024"]
 
 ## Todo
 #1 - style [✅]
+<br>
 #2 - label [✅]
+<br>
 #3 - emoji (optional) [✅]
+<br>
 #4 - customId (role_button) [✅]
+<br>
 #5 - channel (optional) [✅]
+<br>
 #6 - content or embed [✅]
+<br>
 #7 - role [✅]
