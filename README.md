@@ -24,7 +24,7 @@ SERVERID=SERVER_ID
 OWNERS=["596227913209217024"]
 ```
 
-## Todo
+## Todo list:
 #1 - style [✅]
 <br>
 #2 - label [✅]
@@ -38,3 +38,8 @@ OWNERS=["596227913209217024"]
 #6 - content or embed [✅]
 <br>
 #7 - role [✅]
+<br>
+- Button Subcommand :
+   - Delete Button []
+   - Edit Button []
+   - Embed Support []
