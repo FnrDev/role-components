@@ -6,6 +6,7 @@ client.commands = new Discord.Collection();
 client.slash = new Discord.Collection();
 client.aliases = new Discord.Collection();
 require('dotenv').config();
+require('colors');
 
 ['hanlders', 'events'].forEach(handler => {
   require(`./handlers/${handler}`)(client);
@@ -19,7 +20,7 @@ require('dotenv').config();
         database: process.env.database
     });
     db.on('connected', () => {
-      console.log('Database Connected.');
+      console.log('[DataBase] DataBase Connected.'.green);
       client.db = db;
       db.create("buttons");
     })
