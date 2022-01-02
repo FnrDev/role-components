@@ -246,22 +246,10 @@ module.exports = {
             }
             // edit button role
             if (newRole) {
-                const buttonData = await client.db.get('buttons', interaction.guild.id).catch(console.error);
-                if (!buttonData) {
-                    return interaction.reply({
-                        content: `:x: There are no button data in this server.`,
-                        ephemeral: true
-                    }).catch(console.error)
-                }
-                const findMessage = buttonData.find(r => r.message === fetchMessages.id);
-                if (!findMessage) {
-                    return interaction.reply({
-                        content: `:x: There are no button data in this server.`,
-                        ephemeral: true
-                    }).catch(console.error)
-                }
-                findMessage['role'] = newRole.id;
-                await client.db.push('buttons', interaction.guild.id, findMessage);
+                const buttonData = await client.db.get('buttons', message).catch(console.error);
+                buttonData['role'] = newRole.id;
+                await client.db.delete('buttons', message);
+                await client.db.set('buttons', message, { message: fetchMessages.id, role: newRole.id, channel: fetchMessages.channel.id });
             }
             // edit new content
             if (newContent) {
