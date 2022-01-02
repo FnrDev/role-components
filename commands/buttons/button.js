@@ -70,6 +70,12 @@ module.exports = {
             type: 1,
             options: [
                 {
+                    name: "channel_id",
+                    description: "The channel id of the message button was sent to.",
+                    type: 3,
+                    required: true
+                },
+                {
                     name: "message_id",
                     description: "The message id of message you want to edit.",
                     type: 3,
@@ -133,48 +139,159 @@ module.exports = {
             label: 80,
             content: 2000
         };
-        if (label.length > buttonLimits.label) {
-            return interaction.reply({
-                content: `:x: Label must be lower than **${buttonLimits.label}** characters.`,
-                ephemeral: true
+        // Create command
+        if (interaction.options.getSubcommand() === 'create') {
+            if (label.length > buttonLimits.label) {
+                return interaction.reply({
+                    content: `:x: Label must be lower than **${buttonLimits.label}** characters.`,
+                    ephemeral: true
+                }).catch(e => {});
+            }
+            if (content.length > buttonLimits.content) {
+                return interaction.reply({
+                    content: `:x: Content must be lower than **${buttonLimits.content}** characters.`,
+                    ephemeral: true
+                }).catch(e => {});
+            }
+            if (role.managed) {
+                return interaction.reply({
+                    content: `:x: **${role.name}** is managed by integration and can't be given.`,
+                    ephemeral: true
+                }).catch(e => {});
+            }
+            if (!channel.permissionsFor(interaction.guild.me).has('SEND_MESSAGES')) {
+                return interaction.reply({
+                    content: `:x: I dont't have permissions to send message in ${channel} channel.`,
+                    ephemeral: true
+                }).catch(console.error)
+            }
+            const row = new MessageActionRow()
+            .addComponents(
+                new MessageButton()
+                .setCustomId('role_button')
+                .setLabel(label)
+                .setStyle(style)
+                .setEmoji(emoji)
+            )
+            const msg = await channel.send({
+                content: content,
+                components: [row]
             }).catch(e => {});
-        }
-        if (content.length > buttonLimits.content) {
+            await client.db.push('buttons', interaction.guild.id, {
+                message: msg.id,
+                role: role.id,
+                channel: channel.id
+            });
             return interaction.reply({
-                content: `:x: Content must be lower than **${buttonLimits.content}** characters.`,
-                ephemeral: true
-            }).catch(e => {});
+                content: `**✅ button has been sent to ${channel} channel.**`
+            }).catch(e => console.error);
         }
-        if (role.managed) {
-            return interaction.reply({
-                content: `:x: **${role.name}** is managed by integration and can't be given.`,
-                ephemeral: true
-            }).catch(e => {});
+        // Edit command
+        if (interaction.options.getSubcommand() === 'edit') {
+            const channel = interaction.options.getString('channel_id');
+            const message = interaction.options.getString('message_id');
+            const newStyle = interaction.options.getString('new_style');
+            const newLabel = interaction.options.getString('new_label');
+            const newRole = interaction.options.getRole('new_role');
+            const newContent = interaction.options.getString('new_content');
+            const newEmoji = interaction.options.getString('new_emoji');
+            const cacheChannel = interaction.guild.channels.cache.get(channel);
+            if (!cacheChannel) {
+                return interaction.reply({
+                    content: ":x: i can't find this channel.",
+                    ephemeral: true
+                }).catch(console.error);
+            }
+            const fetchMessages = await cacheChannel.messages.fetch(message).catch(e => {
+               return interaction.reply({ content: `:x: I can\'t find this message`, ephemeral: true }).catch(console.error);
+            });
+            if (fetchMessages.author.id !== client.user.id) {
+                return interaction.reply({
+                    content: `i can\'t edit message was sent by another user.`,
+                    ephemeral: true
+                }).catch(console.error);
+            }
+            // edit button style
+            if (newStyle) {
+                const editStyleRow = fetchMessages.components[0]
+                editStyleRow.setComponents(
+                    new MessageButton()
+                    .setCustomId('role_button')
+                    .setLabel(fetchMessages.components[0].components[0].label)
+                    .setStyle(newStyle)
+                    .setEmoji(fetchMessages.components[0].components[0].emoji)
+                )
+                await fetchMessages.edit({
+                    components: [editStyleRow]
+                }).catch(console.error);
+            }
+            // edit button label
+            if (newLabel) {
+                if (newLabel.length > buttonLimits.label) {
+                    return interaction.reply({
+                        content: `:x: Label must be lower than **${buttonLimits.label}** characters.`,
+                        ephemeral: true
+                    }).catch(e => {});
+                }
+                const editLabelRow = fetchMessages.components[0]
+                editLabelRow.setComponents(
+                    new MessageButton()
+                    .setCustomId('role_button')
+                    .setLabel(newLabel)
+                    .setStyle(fetchMessages.components[0].components[0].style)
+                    .setEmoji(fetchMessages.components[0].components[0].emoji)
+                )
+                fetchMessages.edit({
+                    components: [editLabelRow]
+                }).catch(console.error);
+            }
+            // edit button role
+            if (newRole) {
+                const buttonData = await client.db.get('buttons', interaction.guild.id).catch(console.error);
+                if (!buttonData) {
+                    return interaction.reply({
+                        content: `:x: There are no button data in this server.`,
+                        ephemeral: true
+                    }).catch(console.error)
+                }
+                const findMessage = buttonData.find(r => r.message === fetchMessages.id);
+                if (!findMessage) {
+                    return interaction.reply({
+                        content: `:x: There are no button data in this server.`,
+                        ephemeral: true
+                    }).catch(console.error)
+                }
+                findMessage['role'] = newRole.id;
+                console.log(findMessage)
+                await client.db.push('buttons', interaction.guild.id, findMessage);
+            }
+            // edit new content
+            if (newContent) {
+                if (newContent.length > buttonLimits.content) {
+                    return interaction.reply({
+                        content: `:x: Content must be lower than **${buttonLimits.content}** characters.`,
+                        ephemeral: true
+                    }).catch(e => {});
+                }
+                await fetchMessages.edit({ content: newContent });
+            }
+            // edit button emoji
+            if (newEmoji) {
+                const editEmojiRow = fetchMessages.components[0]
+                editEmojiRow.setComponents(
+                    new MessageButton()
+                    .setCustomId('role_button')
+                    .setLabel(fetchMessages.components[0].components[0].label)
+                    .setStyle(fetchMessages.components[0].components[0].style)
+                    .setEmoji(newEmoji)
+                )
+                await fetchMessages.edit({
+                    components: [editEmojiRow]
+                }).catch(console.error);
+            }
+            interaction.reply({
+                content: `✅ button successfully updated [View Message](${fetchMessages.url})`
+            }).catch(console.error);
         }
-        if (!channel.permissionsFor(interaction.guild.me).has('SEND_MESSAGES')) {
-            return interaction.reply({
-                content: `:x: I dont't have permissions to send message in ${channel} channel.`,
-                ephemeral: true
-            }).catch(console.error)
-        }
-        const row = new MessageActionRow()
-        .addComponents(
-            new MessageButton()
-            .setCustomId('role_button')
-            .setLabel(label)
-            .setStyle(style)
-            .setEmoji(emoji)
-        )
-        const msg = await channel.send({
-            content: content,
-            components: [row]
-        }).catch(e => {});
-        await client.db.push('buttons', interaction.guild.id, {
-            message: msg.id,
-            role: role.id
-        });
-        interaction.reply({
-            content: `**✅ button has been sent to ${channel} channel.**`
-        }).catch(e => console.error);
     }
 }

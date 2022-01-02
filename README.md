@@ -39,7 +39,13 @@ OWNERS=["596227913209217024"]
 <br>
 #7 - role [✅]
 <br>
-- Button Subcommand :
+#8 - Remove last message object before push new data for role update []
+
+## Button Subcommand :
    - Delete Button [ ]
-   - Edit Button [ ]
+   - Edit Button [✅]
+   - Add Button []
+
+## Features :
+   - Get channel id from database instead of send channel id in command []
    - Embed Support [ ]
