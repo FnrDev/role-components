@@ -47,5 +47,5 @@ OWNERS=["596227913209217024"]
    - Add Button []
 
 ## Features :
-   - Get channel id from database instead of send channel id in command []
+   - Get channel id from database instead of send channel id in command [✅]
    - Embed Support [ ]
