@@ -248,8 +248,7 @@ module.exports = {
             if (newRole) {
                 const buttonData = await client.db.get('buttons', message).catch(console.error);
                 buttonData['role'] = newRole.id;
-                await client.db.delete('buttons', message);
-                await client.db.set('buttons', message, { message: fetchMessages.id, role: newRole.id, channel: fetchMessages.channel.id });
+                await client.db.set('buttons', fetchMessages.id, buttonData)
             }
             // edit new content
             if (newContent) {
