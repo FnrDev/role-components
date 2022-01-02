@@ -70,12 +70,6 @@ module.exports = {
             type: 1,
             options: [
                 {
-                    name: "channel_id",
-                    description: "The channel id of the message button was sent to.",
-                    type: 3,
-                    required: true
-                },
-                {
                     name: "message_id",
                     description: "The message id of message you want to edit.",
                     type: 3,
@@ -177,7 +171,7 @@ module.exports = {
                 content: content,
                 components: [row]
             }).catch(e => {});
-            await client.db.push('buttons', interaction.guild.id, {
+            await client.db.set('buttons', msg.id, {
                 message: msg.id,
                 role: role.id,
                 channel: channel.id
@@ -188,23 +182,28 @@ module.exports = {
         }
         // Edit command
         if (interaction.options.getSubcommand() === 'edit') {
-            const channel = interaction.options.getString('channel_id');
             const message = interaction.options.getString('message_id');
             const newStyle = interaction.options.getString('new_style');
             const newLabel = interaction.options.getString('new_label');
             const newRole = interaction.options.getRole('new_role');
             const newContent = interaction.options.getString('new_content');
             const newEmoji = interaction.options.getString('new_emoji');
-            const cacheChannel = interaction.guild.channels.cache.get(channel);
+            const getButtonChannel = await client.db.get('buttons', message);
+            if (!getButtonChannel) {
+                return interaction.reply({
+                    content: `:x: There are no data for this message.`,
+                    ephemeral: true
+                }).catch(console.error)
+            }
+            const cacheChannel = interaction.guild.channels.cache.get(getButtonChannel.channel);
             if (!cacheChannel) {
                 return interaction.reply({
-                    content: ":x: i can't find this channel.",
+                    content: `:x: i can\'t find channel with this id, **${getButtonChannel.channel}**`,
                     ephemeral: true
                 }).catch(console.error);
             }
-            const fetchMessages = await cacheChannel.messages.fetch(message).catch(e => {
-               return interaction.reply({ content: `:x: I can\'t find this message`, ephemeral: true }).catch(console.error);
-            });
+            const fetchMessages = await cacheChannel.messages.fetch(getButtonChannel.message).catch(console.error);
+            console.log(fetchMessages)
             if (fetchMessages.author.id !== client.user.id) {
                 return interaction.reply({
                     content: `i can\'t edit message was sent by another user.`,
@@ -262,7 +261,6 @@ module.exports = {
                     }).catch(console.error)
                 }
                 findMessage['role'] = newRole.id;
-                console.log(findMessage)
                 await client.db.push('buttons', interaction.guild.id, findMessage);
             }
             // edit new content
