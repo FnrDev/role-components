@@ -203,7 +203,6 @@ module.exports = {
                 }).catch(console.error);
             }
             const fetchMessages = await cacheChannel.messages.fetch(getButtonChannel.message).catch(console.error);
-            console.log(fetchMessages)
             if (fetchMessages.author.id !== client.user.id) {
                 return interaction.reply({
                     content: `i can\'t edit message was sent by another user.`,
