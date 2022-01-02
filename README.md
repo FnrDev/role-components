@@ -39,7 +39,7 @@ OWNERS=["596227913209217024"]
 <br>
 #7 - role [✅]
 <br>
-#8 - Remove last message object before push new data for role update []
+#8 - Remove last message object before push new data for role update [✅]
 
 ## Button Subcommand :
    - Delete Button [ ]
