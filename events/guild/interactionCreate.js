@@ -82,17 +82,22 @@ module.exports = async(client, interaction) => {
 	}
 	if (interaction.isButton()) {
 		if (interaction.customId === 'role_button') {
-			const data = await client.db.get('buttons', interaction.guild.id);
-			const filterMessage = data.filter(r => r.message === interaction.message.id)[0];
-			const findRole = interaction.guild.roles.cache.get(filterMessage.role);
-			if (!findRole) {
-				return interaction.reply({ content: `:x: i can\'t find role with id **${filterMessage.role}**\nif you are server admin setup button again using **/button**`, ephemeral: true }).catch(e => {});
+			const data = await client.db.get('buttons', interaction.message.id);
+			if (!data) {
+				return interaction.reply({
+					content: `:x: i can\'t find data linked with this message.\nIf you are server admin you can create new button using command, \`/button create\``,
+					ephemeral: true
+				}).catch(console.error);
 			}
-			if (interaction.member.roles.cache.has(filterMessage.role)) {
-				await interaction.member.roles.remove(filterMessage.role).catch(e => {});
+			const findRole = interaction.guild.roles.cache.get(data.role);
+			if (!findRole) {
+				return interaction.reply({ content: `:x: i can\'t find role linked with this message.\nIf you are server admin you can edit message data with command\n**/button edit** and chose \`new_role\` option`, ephemeral: true }).catch(e => {});
+			}
+			if (interaction.member.roles.cache.has(data.role)) {
+				await interaction.member.roles.remove(data.role).catch(e => {});
 				return interaction.reply({ content: `Removed, **${findRole.name}** role.`, ephemeral: true }).catch(e => {});
 			} else {
-				await interaction.member.roles.add(filterMessage.role, `By discord buttons.`).catch(e => console.error);
+				await interaction.member.roles.add(data.role, `By discord buttons.`).catch(e => console.error);
 				return interaction.reply({ content: `Added, **${findRole.name}** role.`, ephemeral: true }).catch(e => {});
 			}
 		}
