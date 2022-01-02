@@ -1,4 +1,4 @@
-const { MessageActionRow, MessageButton } = require('discord.js');
+const { MessageActionRow, MessageButton, Util } = require('discord.js');
 
 module.exports = {
     name: "button",
@@ -158,6 +158,15 @@ module.exports = {
                     content: `:x: I dont't have permissions to send message in ${channel} channel.`,
                     ephemeral: true
                 }).catch(console.error)
+            }
+            if (emoji) {
+                const parseEmoji = Util.parseEmoji(emoji);
+                if (!parseEmoji.id) {
+                    return interaction.reply({
+                        content: `:x: You must send vaild emoji`,
+                        ephemeral: true
+                    }).catch(console.error)
+                }
             }
             const row = new MessageActionRow()
             .addComponents(
