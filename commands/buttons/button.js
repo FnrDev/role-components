@@ -119,6 +119,19 @@ module.exports = {
                     type: 3
                 }
             ]
+        },
+        {
+            name: "delete",
+            description: "Delete button.",
+            type: 1,
+            options: [
+                {
+                    name: "message_id",
+                    description: "The message id of the button.",
+                    type: 3,
+                    required: true
+                }
+            ]
         }
     ],
     permission: "ADMINISTRATOR",
@@ -183,7 +196,8 @@ module.exports = {
             await client.db.set('buttons', msg.id, {
                 message: msg.id,
                 role: role.id,
-                channel: channel.id
+                channel: channel.id,
+                guild: interaction.guild.id
             });
             return interaction.reply({
                 content: `**✅ button has been sent to ${channel} channel.**`
@@ -285,6 +299,23 @@ module.exports = {
             interaction.reply({
                 content: `✅ button successfully updated [View Message](${fetchMessages.url})`
             }).catch(console.error);
+        }
+        // Delete command
+        if (interaction.options.getSubcommand() === 'delete') {
+            const messageId = interaction.options.getString('message_id');
+            const getData = await client.db.get('buttons', messageId);
+            if (!getData) {
+                return interaction.reply({
+                    content: `:x: I can\'t find message data.`,
+                    ephemeral: true
+                }).catch(console.error);
+            }
+           const message = await interaction.guild.channels.cache.get(getData.channel).messages.fetch(getData.message);
+           await message.delete();
+           await client.db.delete('buttons', messageId);
+           interaction.reply({
+               content: `✅ Message has been deleted successfully.`
+           }).catch(console.error)
         }
     }
 }
