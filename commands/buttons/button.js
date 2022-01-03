@@ -132,6 +132,54 @@ module.exports = {
                     required: true
                 }
             ]
+        },
+        {
+            name: "add",
+            description: "Add new button to an exits message.",
+            type: 1,
+            options: [
+                {
+                    name: "message_id",
+                    description: "The message id of the exit message with buttons",
+                    type: 3,
+                    required: true
+                },
+                {
+                    name: "style",
+                    description: "Style of the button.",
+                    type: 3,
+                    choices: [
+                        {
+                            name: "Blue",
+                            value: "PRIMARY"
+                        },
+                        {
+                            name: "Gray",
+                            value: "SECONDARY"
+                        },
+                        {
+                            name: "Green",
+                            value: "SUCCESS"
+                        },
+                        {
+                            name: "Red",
+                            value: "DANGER"
+                        }
+                    ],
+                    required: true
+                },
+                {
+                    name: "label",
+                    description: "The label of button.",
+                    type: 3,
+                    required: true
+                },
+                {
+                    name: "emoji",
+                    description: "The emoji of button.",
+                    type: 3
+                }
+            ]
         }
     ],
     permission: "ADMINISTRATOR",
@@ -316,6 +364,13 @@ module.exports = {
            interaction.reply({
                content: `✅ Message has been deleted successfully.`
            }).catch(console.error)
+        }
+        // Add button
+        if (interaction.options.getSubcommand() === 'add') {
+            const messageID = interaction.options.getString('message_id');
+            const style = interaction.options.getString('style');
+            const label = interaction.options.getString('label');
+            const emoji = interaction.options.getString('emoji');
         }
     }
 }
