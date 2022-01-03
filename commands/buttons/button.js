@@ -175,6 +175,12 @@ module.exports = {
                     required: true
                 },
                 {
+                    name: "role",
+                    description: "The role of button.",
+                    type: 8,
+                    required: true
+                },
+                {
                     name: "emoji",
                     description: "The emoji of button.",
                     type: 3
@@ -370,7 +376,55 @@ module.exports = {
             const messageID = interaction.options.getString('message_id');
             const style = interaction.options.getString('style');
             const label = interaction.options.getString('label');
-            const emoji = interaction.options.getString('emoji');
+            const role = interaction.options.getRole('role');
+            const emoji = interaction.options.getString('emoji') || null;
+            const getData = await client.db.get('buttons', messageID);
+            if (!getData) {
+                return interaction.reply({
+                    content: ":x: I can\'t find message data.",
+                    ephemeral: true
+                }).catch(console.error);
+            }
+            const buttonChannel = interaction.guild.channels.cache.get(getData.channel);
+            if (!buttonChannel) {
+                return interaction.reply({
+                    content: ":x: I can\'t find channel of this message.",
+                    ephemeral: true
+                }).catch(console.error)
+            }
+            const fetchButtonMessage = await buttonChannel.messages.fetch(getData.message).catch(console.error);
+            if (!fetchButtonMessage) {
+                return interaction.reply({
+                    content: ":x: I can\'t find this message.",
+                    ephemeral: true
+                }).catch(console.error)
+            }
+            const totalRows = fetchButtonMessage.components.length;
+            if (fetchButtonMessage.components.length >= 5) {
+                const oldComponects = fetchButtonMessage.components[0];
+                const newRow = fetchButtonMessage.components[0].addComponents(
+                    new MessageButton()
+                    .setCustomId(`role_button_${totalRows + 1}`)
+                    .setStyle(style)
+                    .setLabel(label)
+                    .setEmoji(emoji)
+                )
+                await fetchButtonMessage.edit({ components: [oldComponects, newRow] });
+                return interaction.reply({
+                    content: `✅ New button has been added successfully [View Message](${fetchButtonMessage.url})`
+                })
+            }
+            const addRow = fetchButtonMessage.components[0].addComponents(
+                new MessageButton()
+                .setCustomId(`role_button_${totalRows + 1}`)
+                .setStyle(style)
+                .setLabel(label)
+                .setEmoji(emoji)
+            )
+            await fetchButtonMessage.edit({ components: [addRow] });
+            return interaction.reply({
+                content: `✅ New button has been added successfully [View Message](${fetchButtonMessage.url})`
+            })
         }
     }
 }
