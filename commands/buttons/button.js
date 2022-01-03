@@ -311,8 +311,8 @@ module.exports = {
                 }).catch(console.error);
             }
            const message = await interaction.guild.channels.cache.get(getData.channel).messages.fetch(getData.message);
-           await message.delete();
            await client.db.delete('buttons', messageId);
+           await message.delete();
            interaction.reply({
                content: `✅ Message has been deleted successfully.`
            }).catch(console.error)
