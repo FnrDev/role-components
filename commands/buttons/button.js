@@ -296,7 +296,7 @@ module.exports = {
                     components: [editEmojiRow]
                 }).catch(console.error);
             }
-            interaction.reply({
+            return interaction.reply({
                 content: `✅ button successfully updated [View Message](${fetchMessages.url})`
             }).catch(console.error);
         }
