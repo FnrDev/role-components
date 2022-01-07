@@ -134,60 +134,6 @@ module.exports = {
             ]
         },
         {
-            name: "add",
-            description: "Add new button to an exits message.",
-            type: 1,
-            options: [
-                {
-                    name: "message_id",
-                    description: "The message id of the exit message with buttons",
-                    type: 3,
-                    required: true
-                },
-                {
-                    name: "style",
-                    description: "Style of the button.",
-                    type: 3,
-                    choices: [
-                        {
-                            name: "Blue",
-                            value: "PRIMARY"
-                        },
-                        {
-                            name: "Gray",
-                            value: "SECONDARY"
-                        },
-                        {
-                            name: "Green",
-                            value: "SUCCESS"
-                        },
-                        {
-                            name: "Red",
-                            value: "DANGER"
-                        }
-                    ],
-                    required: true
-                },
-                {
-                    name: "label",
-                    description: "The label of button.",
-                    type: 3,
-                    required: true
-                },
-                {
-                    name: "role",
-                    description: "The role of button.",
-                    type: 8,
-                    required: true
-                },
-                {
-                    name: "emoji",
-                    description: "The emoji of button.",
-                    type: 3
-                }
-            ]
-        },
-        {
             name: "list",
             description: "List all buttons for this server.",
             type: 1
@@ -376,61 +322,7 @@ module.exports = {
                content: `✅ Message has been deleted successfully.`
            }).catch(console.error)
         }
-        // Add button
-        if (interaction.options.getSubcommand() === 'add') {
-            const messageID = interaction.options.getString('message_id');
-            const style = interaction.options.getString('style');
-            const label = interaction.options.getString('label');
-            const role = interaction.options.getRole('role');
-            const emoji = interaction.options.getString('emoji') || null;
-            const getData = await client.db.get('buttons', messageID);
-            if (!getData) {
-                return interaction.reply({
-                    content: ":x: I can\'t find message data.",
-                    ephemeral: true
-                }).catch(console.error);
-            }
-            const buttonChannel = interaction.guild.channels.cache.get(getData.channel);
-            if (!buttonChannel) {
-                return interaction.reply({
-                    content: ":x: I can\'t find channel of this message.",
-                    ephemeral: true
-                }).catch(console.error)
-            }
-            const fetchButtonMessage = await buttonChannel.messages.fetch(getData.message).catch(console.error);
-            if (!fetchButtonMessage) {
-                return interaction.reply({
-                    content: ":x: I can\'t find this message.",
-                    ephemeral: true
-                }).catch(console.error)
-            }
-            const totalRows = fetchButtonMessage.components.length;
-            if (fetchButtonMessage.components.length >= 5) {
-                const oldComponects = fetchButtonMessage.components[0];
-                const newRow = fetchButtonMessage.components[0].addComponents(
-                    new MessageButton()
-                    .setCustomId(`role_button_${totalRows + 1}`)
-                    .setStyle(style)
-                    .setLabel(label)
-                    .setEmoji(emoji)
-                )
-                await fetchButtonMessage.edit({ components: [oldComponects, newRow] });
-                return interaction.reply({
-                    content: `✅ New button has been added successfully [View Message](${fetchButtonMessage.url})`
-                })
-            }
-            const addRow = fetchButtonMessage.components[0].addComponents(
-                new MessageButton()
-                .setCustomId(`role_button_${totalRows + 1}`)
-                .setStyle(style)
-                .setLabel(label)
-                .setEmoji(emoji)
-            )
-            await fetchButtonMessage.edit({ components: [addRow] });
-            return interaction.reply({
-                content: `✅ New button has been added successfully [View Message](${fetchButtonMessage.url})`
-            })
-        }
+        // List command
         if (interaction.options.getSubcommand() === 'list') {
             const allButons = await client.db.all("buttons");
             const filterGuildButtons = allButons.filter(r => r.data.guild === interaction.guild.id);
