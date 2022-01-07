@@ -48,4 +48,5 @@ OWNERS=["596227913209217024"]
 
 ## Features :
    - Get channel id from database instead of send channel id in command [✅]
+   - List all buttons in the server []
    - Embed Support [ ]
