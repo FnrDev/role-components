@@ -1,4 +1,4 @@
-const { MessageActionRow, MessageButton, Util } = require('discord.js');
+const { MessageActionRow, MessageButton, Util, MessageEmbed } = require('discord.js');
 
 module.exports = {
     name: "button",
@@ -119,6 +119,24 @@ module.exports = {
                     type: 3
                 }
             ]
+        },
+        {
+            name: "delete",
+            description: "Delete button.",
+            type: 1,
+            options: [
+                {
+                    name: "message_id",
+                    description: "The message id of the button.",
+                    type: 3,
+                    required: true
+                }
+            ]
+        },
+        {
+            name: "list",
+            description: "List all buttons for this server.",
+            type: 1
         }
     ],
     permission: "ADMINISTRATOR",
@@ -183,7 +201,8 @@ module.exports = {
             await client.db.set('buttons', msg.id, {
                 message: msg.id,
                 role: role.id,
-                channel: channel.id
+                channel: channel.id,
+                guild: interaction.guild.id
             });
             return interaction.reply({
                 content: `**✅ button has been sent to ${channel} channel.**`
@@ -282,9 +301,52 @@ module.exports = {
                     components: [editEmojiRow]
                 }).catch(console.error);
             }
-            interaction.reply({
+            return interaction.reply({
                 content: `✅ button successfully updated [View Message](${fetchMessages.url})`
             }).catch(console.error);
+        }
+        // Delete command
+        if (interaction.options.getSubcommand() === 'delete') {
+            const messageId = interaction.options.getString('message_id');
+            const getData = await client.db.get('buttons', messageId);
+            if (!getData) {
+                return interaction.reply({
+                    content: `:x: I can\'t find message data.`,
+                    ephemeral: true
+                }).catch(console.error);
+            }
+           const message = await interaction.guild.channels.cache.get(getData.channel).messages.fetch(getData.message);
+           await client.db.delete('buttons', messageId);
+           await message.delete();
+           interaction.reply({
+               content: `✅ Message has been deleted successfully.`
+           }).catch(console.error)
+        }
+        // List command
+        if (interaction.options.getSubcommand() === 'list') {
+            const allButons = await client.db.all("buttons");
+            const filterGuildButtons = allButons.filter(r => r.data.guild === interaction.guild.id);
+            if (!filterGuildButtons) {
+                return interaction.reply({
+                    content: ":x: There are no button messages in this server.",
+                    ephemeral: true
+                })
+            }
+            let loopButtons = '';
+            let num = 0;
+            filterGuildButtons.forEach(button => {
+                num++
+                loopButtons += `**#${num}** - [View Message](https://discord.com/channels/${interaction.guild.id}/${button.data.channel}/${button.data.message}) - **Role:** <@&${button.data.role}> - **Channel:** <#${button.data.channel}>\n`
+            });
+            const embed = new MessageEmbed()
+            .setAuthor({ name: interaction.guild.name, iconURL: interaction.guild.iconURL({ dynamic: true }) })
+            .setDescription(loopButtons)
+            .setColor(interaction.guild.me.displayHexColor)
+            .setFooter({ text: interaction.user.tag, iconURL: interaction.user.displayAvatarURL({ dynamic: true }) })
+            .setTimestamp()
+            interaction.reply({
+                embeds: [embed]
+            })
         }
     }
 }
