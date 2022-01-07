@@ -141,7 +141,8 @@ module.exports = {
                 {
                     name: "filter_by_channel",
                     description: "Filter buttons list by channel.",
-                    type: 7
+                    type: 7,
+                    channel_types: [0, 5]
                 },
                 {
                     name: "filter_by_role",
@@ -336,7 +337,57 @@ module.exports = {
         }
         // List command
         if (interaction.options.getSubcommand() === 'list') {
+            const channel = interaction.options.getChannel('filter_by_channel');
+            const role = interaction.options.getRole('filter_by_role');
             const allButons = await client.db.all("buttons");
+            if (channel) {
+                const filterByChannel = allButons.filter(r => r.data.guild === interaction.guild.id && r.data.channel === channel.id);
+                if (!filterByChannel.length) {
+                    return interaction.reply({
+                        content: ":x: There are no buttons in this channel.",
+                        ephemeral: true
+                    })
+                }
+                let totalButtons = 0;
+                let pushString = '';
+                filterByChannel.forEach(button => {
+                    totalButtons++
+                    pushString += `**#${totalButtons}** - [View Message](https://discord.com/channels/${interaction.guild.id}/${button.data.channel}/${button.data.message}) - **Role:** <@&${button.data.role}> - **Channel:** <#${button.data.channel}>\n`
+                })
+                const embed = new MessageEmbed()
+                .setAuthor({ name: interaction.guild.name, iconURL: interaction.guild.iconURL({ dynamic: true }) })
+                .setDescription(pushString)
+                .setColor(interaction.guild.me.displayHexColor)
+                .setFooter({ text: interaction.user.tag, iconURL: interaction.user.displayAvatarURL({ dynamic: true }) })
+                .setTimestamp()
+                return interaction.reply({
+                    embeds: [embed]
+                })
+            }
+            if (role) {
+                const filterByRole = allButons.filter(r => r.guild === interaction.guild.id && r.data.role === role.id);
+                if (!filterByRole.length) {
+                    return interaction.reply({
+                        content: ":x: There are no buttons in this channel.",
+                        ephemeral: true
+                    })
+                }
+                let totalRole = 0;
+                let pushFilterRole = '';
+                filterByRole.forEach(button => {
+                    totalRole++
+                    pushFilterRole += `**#${totalRole}** - [View Message](https://discord.com/channels/${interaction.guild.id}/${button.data.channel}/${button.data.message}) - **Role:** <@&${button.data.role}> - **Channel:** <#${button.data.channel}>\n`
+                });
+                const embed = new MessageEmbed()
+                .setAuthor({ name: interaction.guild.name, iconURL: interaction.guild.iconURL({ dynamic: true }) })
+                .setDescription(pushFilterRole)
+                .setColor(interaction.guild.me.displayHexColor)
+                .setFooter({ text: interaction.user.tag, iconURL: interaction.user.displayAvatarURL({ dynamic: true }) })
+                .setTimestamp()
+                return interaction.reply({
+                    embeds: [embed]
+                })
+            }
             const filterGuildButtons = allButons.filter(r => r.data.guild === interaction.guild.id);
             if (!filterGuildButtons) {
                 return interaction.reply({
