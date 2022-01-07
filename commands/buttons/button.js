@@ -136,7 +136,19 @@ module.exports = {
         {
             name: "list",
             description: "List all buttons for this server.",
-            type: 1
+            type: 1,
+            options: [
+                {
+                    name: "filter_by_channel",
+                    description: "Filter buttons list by channel.",
+                    type: 7
+                },
+                {
+                    name: "filter_by_role",
+                    description: "Filter buttons list by role.",
+                    type: 8
+                }
+            ]
         }
     ],
     permission: "ADMINISTRATOR",
