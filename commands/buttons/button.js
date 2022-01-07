@@ -1,4 +1,4 @@
-const { MessageActionRow, MessageButton, Util } = require('discord.js');
+const { MessageActionRow, MessageButton, Util, MessageEmbed } = require('discord.js');
 
 module.exports = {
     name: "button",
@@ -186,6 +186,11 @@ module.exports = {
                     type: 3
                 }
             ]
+        },
+        {
+            name: "list",
+            description: "List all buttons for this server.",
+            type: 1
         }
     ],
     permission: "ADMINISTRATOR",
@@ -424,6 +429,31 @@ module.exports = {
             await fetchButtonMessage.edit({ components: [addRow] });
             return interaction.reply({
                 content: `✅ New button has been added successfully [View Message](${fetchButtonMessage.url})`
+            })
+        }
+        if (interaction.options.getSubcommand() === 'list') {
+            const allButons = await client.db.all("buttons");
+            const filterGuildButtons = allButons.filter(r => r.data.guild === interaction.guild.id);
+            if (!filterGuildButtons) {
+                return interaction.reply({
+                    content: ":x: There are no button messages in this server.",
+                    ephemeral: true
+                })
+            }
+            let loopButtons = '';
+            let num = 0;
+            filterGuildButtons.forEach(button => {
+                num++
+                loopButtons += `**#${num}** - [View Message](https://discord.com/channels/${interaction.guild.id}/${button.data.channel}/${button.data.message}) - **Role:** <@&${button.data.role}> - **Channel:** <#${button.data.channel}>\n`
+            });
+            const embed = new MessageEmbed()
+            .setAuthor({ name: interaction.guild.name, iconURL: interaction.guild.iconURL({ dynamic: true }) })
+            .setDescription(loopButtons)
+            .setColor(interaction.guild.me.displayHexColor)
+            .setFooter({ text: interaction.user.tag, iconURL: interaction.user.displayAvatarURL({ dynamic: true }) })
+            .setTimestamp()
+            interaction.reply({
+                embeds: [embed]
             })
         }
     }
