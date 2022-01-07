@@ -101,6 +101,5 @@ module.exports = async(client, interaction) => {
 				return interaction.reply({ content: `Added, **${findRole.name}** role.`, ephemeral: true }).catch(e => {});
 			}
 		}
-		// if (interaction.customId === )
 	}
 } 
