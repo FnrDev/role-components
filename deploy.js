@@ -24,6 +24,26 @@ module.exports = [
         type: 1,
         options: [
             {
+                name: "type",
+                description: "Choose how role given works",
+                type: 3,
+                choices: [
+                    {
+                        name: "Toggle (This type adds/remove the role depending on whether the user has the role.)",
+                        value: "toggle"
+                    },
+                    {
+                        name: "Give (This type adds the role whenever a user click the button)",
+                        value: "give"
+                    },
+                    {
+                        name: "Take (This type removes the role whenever the user click the button)",
+                        value: "take"
+                    }
+                ],
+                required: true
+            },
+            {
                 name: "style",
                 description: "Style of the button.",
                 type: 3,
