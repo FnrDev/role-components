@@ -148,6 +148,25 @@ module.exports = [
                 name: "filter_by_role",
                 description: "Filter buttons list by role.",
                 type: 8
+            },
+            {
+                name: "filter_by_action",
+                description: "Filters buttons by there actions (Toggle / Give / Take)",
+                type: 3,
+                choices: [
+                    {
+                        name: "Toggle",
+                        value: "toggle"
+                    },
+                    {
+                        name: "Give",
+                        value: "give"
+                    },
+                    {
+                        name: "Take",
+                        value: "take"
+                    }
+                ]
             }
         ]
     }
