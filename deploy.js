@@ -1,3 +1,22 @@
+const buttonStyles = [
+    {
+        name: "Blue",
+        value: "PRIMARY"
+    },
+    {
+        name: "Gray",
+        value: "SECONDARY"
+    },
+    {
+        name: "Green",
+        value: "SUCCESS"
+    },
+    {
+        name: "Red",
+        value: "DANGER"
+    }
+]
+
 module.exports = [
     {
         name: "create",
@@ -8,24 +27,7 @@ module.exports = [
                 name: "style",
                 description: "Style of the button.",
                 type: 3,
-                choices: [
-                    {
-                        name: "Blue",
-                        value: "PRIMARY"
-                    },
-                    {
-                        name: "Gray",
-                        value: "SECONDARY"
-                    },
-                    {
-                        name: "Green",
-                        value: "SUCCESS"
-                    },
-                    {
-                        name: "Red",
-                        value: "DANGER"
-                    }
-                ],
+                choices: buttonStyles,
                 required: true
             },
             {
@@ -74,24 +76,7 @@ module.exports = [
                 name: "new_style",
                 description: "Edit style of the button.",
                 type: 3,
-                choices: [
-                    {
-                        name: "Blue",
-                        value: "PRIMARY"
-                    },
-                    {
-                        name: "Gray",
-                        value: "SECONDARY"
-                    },
-                    {
-                        name: "Green",
-                        value: "SUCCESS"
-                    },
-                    {
-                        name: "Red",
-                        value: "DANGER"
-                    }
-                ]
+                choices: buttonStyles
             },
             {
                 name: "new_label",
