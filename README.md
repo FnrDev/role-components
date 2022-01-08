@@ -6,6 +6,16 @@
 ---
 ### Note: Node.js 16.6.0 or newer is required.
 ---
+😎 Features:
+<br><br>
+#1 - `/button create` - Create button when user click them give them role.
+<br>
+#2 - `/button list` - Show all buttons in the server.
+<br>
+#3 - `/button edit` - Edit an exits message button.
+<br>
+#4 - `/button delete` - Delete message button.
+---
 
 ## Installation
 
@@ -25,29 +35,8 @@ OWNERS=["596227913209217024"]
 ```
 
 ## Todo list:
-#1 - style [✅]
+#1 - Toggle role []
 <br>
-#2 - label [✅]
+#2 - Embed Support []
 <br>
-#3 - emoji (optional) [✅]
-<br>
-#4 - customId (role_button) [✅]
-<br>
-#5 - channel (optional) [✅]
-<br>
-#6 - content or embed [✅]
-<br>
-#7 - role [✅]
-<br>
-#8 - Remove last message object before push new data for role update [✅]
-
-## Button Subcommand :
-   - Delete Button [✅]
-   - Edit Button [✅]
-   - Add Button []
-   - List Button [✅]
-
-## Features :
-   - Get channel id from database instead of send channel id in command [✅]
-   - List all buttons in the server [✅]
-   - Embed Support [ ]
+#3 - Add button to exits message []
