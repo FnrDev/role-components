@@ -99,11 +99,11 @@ module.exports = {
                 }).catch(console.error);
             }
             const fetchMessages = await cacheChannel.messages.fetch(getButtonChannel.message).catch(console.error);
-            if (fetchMessages.author.id !== client.user.id) {
+            if (!fetchMessages) {
                 return interaction.reply({
-                    content: `i can\'t edit message was sent by another user.`,
+                    content: `:x: I can\'t find this message.`,
                     ephemeral: true
-                }).catch(console.error);
+                })
             }
             // edit button style
             if (newStyle) {
