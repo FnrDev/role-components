@@ -194,12 +194,13 @@ module.exports = {
         if (interaction.options.getSubcommand() === 'list') {
             const channel = interaction.options.getChannel('filter_by_channel');
             const role = interaction.options.getRole('filter_by_role');
+            const action = interaction.options.getString('filter_by_action');
             const allButons = await client.db.all("buttons");
             if (channel) {
                 const filterByChannel = allButons.filter(r => r.data.guild === interaction.guild.id && r.data.channel === channel.id);
                 if (!filterByChannel.length) {
                     return interaction.reply({
-                        content: ":x: There are no buttons in this channel.",
+                        content: ":x: There are no buttons for this channel.",
                         ephemeral: true
                     })
                 }
@@ -223,7 +224,7 @@ module.exports = {
                 const filterByRole = allButons.filter(r => r.guild === interaction.guild.id && r.data.role === role.id);
                 if (!filterByRole.length) {
                     return interaction.reply({
-                        content: ":x: There are no buttons in this channel.",
+                        content: ":x: There are no buttons for this role.",
                         ephemeral: true
                     })
                 }
@@ -236,6 +237,33 @@ module.exports = {
                 const embed = new MessageEmbed()
                 .setAuthor({ name: interaction.guild.name, iconURL: interaction.guild.iconURL({ dynamic: true }) })
                 .setDescription(pushFilterRole)
+                .setColor(interaction.guild.me.displayHexColor)
+                .setFooter({ text: interaction.user.tag, iconURL: interaction.user.displayAvatarURL({ dynamic: true }) })
+                .setTimestamp()
+                return interaction.reply({
+                    embeds: [embed]
+                })
+            }
+            if (action) {
+                const filterByAction = allButons.filter(
+                    r => r.data.guild === interaction.guild.id &&
+                    r.data.action === action
+                )
+                if (!filterByAction.length) {
+                    return interaction.reply({
+                        content: ":x: There are no buttons for this action.",
+                        ephemeral: true
+                    })
+                }
+                let totalActions = 0;
+                let pushActions = '';
+                filterByAction.forEach(button => {
+                    totalActions++
+                    pushActions += `**#${totalActions}** - [View Message](https://discord.com/channels/${interaction.guild.id}/${button.data.channel}/${button.data.message}) - **Role:** <@&${button.data.role}> - **Channel:** <#${button.data.channel}>\n`
+                })
+                const embed = new MessageEmbed()
+                .setAuthor({ name: interaction.guild.name, iconURL: interaction.guild.iconURL({ dynamic: true }) })
+                .setDescription(pushActions)
                 .setColor(interaction.guild.me.displayHexColor)
                 .setFooter({ text: interaction.user.tag, iconURL: interaction.user.displayAvatarURL({ dynamic: true }) })
                 .setTimestamp()
