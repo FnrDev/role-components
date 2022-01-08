@@ -7,6 +7,7 @@ module.exports = {
     options: buttonOptions,
     permission: "ADMINISTRATOR",
     run: async(interaction, client) => {
+        const type = interaction.options.getString('type');
         const style = interaction.options.getString('style');
         const label = interaction.options.getString('label');
         const role = interaction.options.getRole('role');
@@ -68,7 +69,8 @@ module.exports = {
                 message: msg.id,
                 role: role.id,
                 channel: channel.id,
-                guild: interaction.guild.id
+                guild: interaction.guild.id,
+                action: type
             });
             return interaction.reply({
                 content: `**✅ button has been sent to ${channel} channel.**`

@@ -89,16 +89,52 @@ module.exports = async(client, interaction) => {
 					ephemeral: true
 				}).catch(console.error);
 			}
-			const findRole = interaction.guild.roles.cache.get(data.role);
-			if (!findRole) {
-				return interaction.reply({ content: `:x: i can\'t find role linked with this message.\nIf you are server admin you can edit message data with command\n**/button edit** and chose \`new_role\` option`, ephemeral: true }).catch(e => {});
+			if (data.action === 'toggle') {
+				const findRole = interaction.guild.roles.cache.get(data.role);
+				if (!findRole) {
+					return interaction.reply({ content: `:x: i can\'t find role linked with this message.\nIf you are server admin you can edit message data with command\n**/button edit** and chose \`new_role\` option`, ephemeral: true }).catch(e => {});
+				}
+				if (interaction.member.roles.cache.has(data.role)) {
+					await interaction.member.roles.remove(data.role).catch(e => {});
+					return interaction.reply({ content: `Removed, **${findRole.name}** role.`, ephemeral: true }).catch(e => {});
+				} else {
+					await interaction.member.roles.add(data.role, `By discord buttons.`).catch(e => console.error);
+					return interaction.reply({ content: `Added, **${findRole.name}** role.`, ephemeral: true }).catch(e => {});
+				}
 			}
-			if (interaction.member.roles.cache.has(data.role)) {
-				await interaction.member.roles.remove(data.role).catch(e => {});
-				return interaction.reply({ content: `Removed, **${findRole.name}** role.`, ephemeral: true }).catch(e => {});
-			} else {
-				await interaction.member.roles.add(data.role, `By discord buttons.`).catch(e => console.error);
-				return interaction.reply({ content: `Added, **${findRole.name}** role.`, ephemeral: true }).catch(e => {});
+			if (data.action === 'give') {
+				const findRole = interaction.guild.roles.cache.get(data.role);
+				if (!findRole) {
+					return interaction.reply({ content: `:x: i can\'t find role linked with this message.\nIf you are server admin you can edit message data with command\n**/button edit** and chose \`new_role\` option`, ephemeral: true }).catch(e => {});
+				}
+				if (interaction.member.roles.cache.has(data.role)) {
+					return interaction.reply({
+						content: `:x: You already have **${findRole.name}** role.`,
+						ephemeral: true
+					})
+				}
+				await interaction.member.roles.add(data.role);
+				return interaction.reply({
+					content: `Added, **${findRole.name}** role.`,
+					ephemeral: true
+				})
+			}
+			if (data.action === 'take') {
+				const findRole = interaction.guild.roles.cache.get(data.role);
+				if (!findRole) {
+					return interaction.reply({ content: `:x: i can\'t find role linked with this message.\nIf you are server admin you can edit message data with command\n**/button edit** and chose \`new_role\` option`, ephemeral: true }).catch(e => {});
+				}
+				if (!interaction.member.roles.cache.has(data.role)) {
+					return interaction.reply({
+						content: `:x: You don't have **${findRole.name}** role.`,
+						ephemeral: true
+					})
+				}
+				await interaction.member.roles.remove(data.role);
+				interaction.reply({
+					content: `Removed, **${findRole.name}** role.`,
+					ephemeral: true
+				})
 			}
 		}
 	}
