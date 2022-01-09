@@ -35,7 +35,7 @@ OWNERS=["596227913209217024"]
 ```
 
 ## Todo list:
-#1 - Toggle role []
+#1 - Toggle role [✅]
 <br>
 #2 - Embed Support []
 <br>

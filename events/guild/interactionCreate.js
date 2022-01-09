@@ -50,7 +50,11 @@ module.exports = async(client, interaction) => {
 	}
 	try {
 		if (interaction.isSelectMenu()) {
-			if (interaction.customId === interaction.customId === 'info_cmd' || interaction.customId === 'general_cmd') {
+			const commandsCustomIDS = [
+				"info_cmd",
+				"general_cmd"
+			]
+			if (commandsCustomIDS.includes(interaction.customId)) {
 				const selectedValues = interaction.values;
 				const findCommand = client.commands.find(r => r.name === selectedValues[0])
 				if (selectedValues.includes(findCommand.name)) {
@@ -69,9 +73,10 @@ module.exports = async(client, interaction) => {
 					if (findCommand.timeout) {
 						embed.addField("Timeout:", humanizeDuration(findCommand.timeout, { round: true }))
 					}
-					interaction.reply({
-						embeds: [embed],
-						ephemeral: true
+					interaction.message.edit({
+						content: null,
+						components: [],
+						embeds: [embed]
 					})
 				}
 			}
