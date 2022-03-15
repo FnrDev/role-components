@@ -73,7 +73,7 @@ module.exports = {
                 action: type
             });
             return interaction.reply({
-                content: `**✅ button has been sent to ${channel} channel.**`
+                content: `**✅ button has been sent to ${channel} channel. [View Message](<${msg.url}>)**`
             }).catch(e => console.error);
         }
         // Edit command
