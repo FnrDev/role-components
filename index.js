@@ -27,12 +27,6 @@ require('colors');
 })();
 
 // handle process events
-process.on('unhandledRejection', (err) => {
-  console.error(`Unhandled Promise: ${err}`.red);
-});
-
-process.on('uncaughtException', (err) => {
-  console.error(`Uncaught Exception: ${err}`.red);
-});
+process.on('unhandledRejection', console.log);
 
 client.login(process.env.TOKEN);

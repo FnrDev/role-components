@@ -18,12 +18,12 @@
   },
   "homepage": "https://github.com/FnrDev/buttonsreadme",
   "dependencies": {
-    "@discordjs/rest": "^0.1.0-canary.0",
+    "@discordjs/rest": "^0.4.1",
     "colors": "^1.4.0",
-    "discord-api-types": "^0.23.1",
-    "discord.js": "^13.5.0",
+    "discord-api-types": "^0.33.0",
+    "discord.js": "^13.7.0",
     "dotenv": "^10.0.0",
     "humanize-duration": "^3.27.0",
-    "mysql-database": "^1.2.7"
+    "mysql-database": "^1.2.8"
   }
 }
