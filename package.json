@@ -4,7 +4,7 @@
   "description": "An easy bot to create discord buttons easily.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "slash": "node deploy/slash.js"
   },
   "repository": {
     "type": "git",
