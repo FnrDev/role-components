@@ -48,17 +48,6 @@ module.exports = {
             })
         }
 
-        // is there emoji
-        if (emoji) {
-            const parseEmoji = Util.parseEmoji(emoji);
-            if (!parseEmoji.id) {
-                return interaction.reply({
-                    content: ":x: You must send valid emoji.",
-                    ephemeral: true
-                })
-            }
-        }
-
         // create row with button component
         const row = new MessageActionRow()
         .addComponents(
