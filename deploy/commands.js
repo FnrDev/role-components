@@ -85,10 +85,53 @@ module.exports = [
                     }
                 ]
             },
+
+            // list command
             {
                 name: "list",
                 description: "Get list of all buttons",
                 type: 1
+            },
+
+            // edit command
+            {
+                name: "edit",
+                description: "Edit a button message",
+                type: 1,
+                options: [
+                    {
+                        name: "message_id",
+                        description: "The message id to edit",
+                        type: 3,
+                        required: true
+                    },
+                    {
+                        name: "label",
+                        description: "The new label name",
+                        type: 3
+                    },
+                    {
+                        name: "style",
+                        description: "The new button style",
+                        type: 3,
+                        choices: buttonStyles
+                    },
+                    {
+                        name: "role",
+                        description: "The new role to give",
+                        type: 8
+                    },
+                    {
+                        name: "content",
+                        description: "The new message content",
+                        type: 3
+                    },
+                    {
+                        name: "emoji",
+                        description: "The new button emoji",
+                        type: 3
+                    }
+                ]
             }
         ],
     },
