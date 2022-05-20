@@ -67,7 +67,7 @@ module.exports = {
         // set message data into database
         await client.db.set('buttons', msg.id, {
             message: msg.id,
-            role: role.id,
+            roles: [role.id],
             channel: channel.id,
             guild: interaction.guild.id,
             action: type
