@@ -92,4 +92,9 @@ module.exports = [
             }
         ],
     },
+
+    {
+        name: "ping",
+        description: "Get bot speed."
+    }
 ]
