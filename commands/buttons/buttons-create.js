@@ -70,7 +70,13 @@ module.exports = {
             roles: [role.id],
             channel: channel.id,
             guild: interaction.guild.id,
-            action: type
+            action: type,
+            component: {
+                label,
+                style,
+                content,
+                emoji
+            }
         });
 
         // reply to interaction
