@@ -132,6 +132,21 @@ module.exports = [
                         type: 3
                     }
                 ]
+            },
+
+            // delete command
+            {
+                name: "delete",
+                description: "Delete a message",
+                type: 1,
+                options: [
+                    {
+                        name: "message_id",
+                        description: "The message id to delete.",
+                        type: 3,
+                        required: true
+                    }
+                ]
             }
         ],
     },
